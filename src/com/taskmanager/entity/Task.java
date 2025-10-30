@@ -11,7 +11,7 @@ public class Task {
 	String description;
 	String status;
 	String createdAt;
-	LocalDateTime updatedAt;
+	String updatedAt;
 	
 	public Task(int id, String description, String status, String createdAt) {
 		id = id++;
@@ -42,8 +42,3 @@ public class Task {
 	}
 	
 }
-
-/*LocalDatetime dateTime = LocalDateTime.now();
- DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH-mm-ss");
- String newDateTime = dateTime.format(formatter);
- */
