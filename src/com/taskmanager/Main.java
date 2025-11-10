@@ -1,7 +1,5 @@
 package com.taskmanager;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
 import com.taskmanager.Entity.*;
 
@@ -13,13 +11,14 @@ public class Main {
 	
 	public static void main(String[] args) {
 		Scanner scn = new Scanner(System.in);
-		/*System.out.println("Task: ");
+		System.out.println("Task: ");
 		String task = scn.nextLine();
 		
 		Task.createTask(task);
 		
-		Main.menu();*/
-		
+		/*Main.menu();
+
+
 		try {
 		      File myObj = new File("data.json"); // Create File object
 		      if (myObj.createNewFile()) {           // Try to create the file
@@ -31,6 +30,17 @@ public class Main {
 		      System.out.println("An error occurred.");
 		      e.printStackTrace(); // Print error details
 		    }
+
+        try {
+            FileWriter myWriter = new FileWriter("filename.txt");
+            myWriter.write("Files in Java might be tricky, but it is fun enough!");
+            myWriter.close();  // must close manually
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }*/
+
 		scn.close();		
 
 		
