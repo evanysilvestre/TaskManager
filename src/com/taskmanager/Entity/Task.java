@@ -11,14 +11,14 @@ import java.util.List;
 
 
 public class Task {
-    static int id = 1;
+    int id;
     String description;
     String status;
     String createdAt;
     String updatedAt;
 
     public Task(int id, String description, String status, String createdAt, String updatedAt) {
-        id = id++;
+        this.id = id;
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
@@ -30,7 +30,8 @@ public class Task {
         return "Task: Id: " + id +
                 ", Description: " + description +
                 ", status: " + status +
-                ", createdAt: " + createdAt + "\n";
+                ", createdAt: " + createdAt +
+                ", updatedAt: " + updatedAt + "\n";
     }
 
     // Helper method to convert a single Task object to a JSON string
@@ -44,7 +45,7 @@ public class Task {
                         "    \"createdAt\": \"%s\"\n" +
                         "    \"updatedAt\": \"%s\"\n" +
                         "}",
-                id, // Assuming getId() exists and returns an integer
+                task.id, // Assuming getId() exists and returns an integer
                 task.description,
                 task.status,
                 task.createdAt,
@@ -54,12 +55,14 @@ public class Task {
 
     public static void createTask(String description) { // Pass 'id' or generate it
 
+        Path filePath = Path.of("data.json");
+
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH-mm-ss");
         String createdAt = dateTime.format(formatter);
         String status = "todo";
         String updatedAt = "";
-        
+
         Task newTask = new Task(id, description, status, createdAt, updatedAt);
 
         List<Task> todoTask = new ArrayList<>();
@@ -68,7 +71,7 @@ public class Task {
         // 2. Convert the new Task to a JSON string
         String newTaskJson = taskToJsonString(newTask);
 
-        Path filePath = Path.of("data.json");
+
 
         try {
             String existingContent = "";
