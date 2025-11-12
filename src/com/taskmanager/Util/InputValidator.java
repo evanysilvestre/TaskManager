@@ -1,4 +1,4 @@
-/*import java.util.Scanner;
+import java.util.Scanner;
 
 public class InputValidator {
 
@@ -11,7 +11,7 @@ public class InputValidator {
                 if (value >= 0 && value <= 7) {
                     return value;
                 } else {
-                    System.out.println("Invalid range. The number must be between 0 and 5.");
+                    System.out.println("Invalid range. The number must be between 0 and 7.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid number. Please try again.");
@@ -26,4 +26,4 @@ public class InputValidator {
         System.out.println("You entered: " + option);
     }
 }
-*/
+

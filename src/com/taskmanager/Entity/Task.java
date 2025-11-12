@@ -1,7 +1,5 @@
 package com.taskmanager.Entity;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,9 +59,11 @@ public class Task {
         String createdAt = dateTime.format(formatter);
         String status = "todo";
         String updatedAt = "";
-
-        // 1. Create the new Task object
+        
         Task newTask = new Task(id, description, status, createdAt, updatedAt);
+
+        List<Task> todoTask = new ArrayList<>();
+        todoTask.add(newTask);
 
         // 2. Convert the new Task to a JSON string
         String newTaskJson = taskToJsonString(newTask);
@@ -71,7 +71,6 @@ public class Task {
         Path filePath = Path.of("data.json");
 
         try {
-            // --- READ EXISTING DATA ---
             String existingContent = "";
 
             // If the file exists, read all its content
@@ -109,31 +108,4 @@ public class Task {
 
         System.out.println("Your task was created: " + newTaskJson);
     }
-
-    /*public static void createTask(String description) {
-        LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH-mm-ss");
-        String createdAt = dateTime.format(formatter);
-        String status = "todo";
-        String updatedAt = "";
-
-        Task task = new Task(id, description, status, createdAt, updatedAt);
-
-        List<Task> tasks = new ArrayList<>();
-        tasks.add(task);
-
-        try {
-            FileWriter myDataJsonWriter = new FileWriter("data.json");
-            myDataJsonWriter.write(tasks.toString());
-            myDataJsonWriter.close();  // must close manually
-            System.out.println("Successfully wrote to the file.");
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-        System.out.println("Your task was created! " + tasks);
-    }
-*/
-
 }
