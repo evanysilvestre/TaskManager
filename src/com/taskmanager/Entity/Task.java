@@ -1,5 +1,8 @@
 package com.taskmanager.Entity;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,7 +45,7 @@ public class Task {
                         "    \"id\": %d,\n" +
                         "    \"description\": \"%s\",\n" +
                         "    \"status\": \"%s\",\n" +
-                        "    \"createdAt\": \"%s\"\n" +
+                        "    \"createdAt\": \"%s\",\n" +
                         "    \"updatedAt\": \"%s\"\n" +
                         "}",
                 task.id, // Assuming getId() exists and returns an integer
@@ -53,10 +56,68 @@ public class Task {
         );
     }
 
+    public static int loadLastId() {
+        File file = new File("data.json");
+
+        if (!file.exists()) {
+            System.out.println("No file found, starting fresh.");
+            return 0;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+
+            // Read entire file into 1 string
+            StringBuilder content = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                content.append(line);
+            }
+
+            String json = content.toString();
+
+            int lastId = 0;
+            int index = 0;
+
+            // Search for every "id": number
+            while ((index = json.indexOf("\"id\"", index)) != -1) {
+
+                int colon = json.indexOf(":", index);
+                int comma = json.indexOf(",", colon);
+
+                // Extract text after colon until comma (or end)
+                String rawId = (comma == -1)
+                        ? json.substring(colon + 1).trim()
+                        : json.substring(colon + 1, comma).trim();
+
+                // Keep only numbers (remove quotes, spaces, etc.)
+                rawId = rawId.replaceAll("[^0-9]", "");
+
+                if (!rawId.isEmpty()) {
+                    int id = Integer.parseInt(rawId);
+                    if (id > lastId) lastId = id;
+                }
+
+                // Move forward to continue the search
+                index = colon + 1;
+            }
+
+            return lastId;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
     public static void createTask(String description) { // Pass 'id' or generate it
 
         Path filePath = Path.of("data.json");
 
+        int lastIndex = loadLastId();
+
+        int id = lastIndex+1;
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH-mm-ss");
         String createdAt = dateTime.format(formatter);
