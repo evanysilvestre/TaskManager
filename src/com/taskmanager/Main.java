@@ -7,8 +7,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		Scanner scn = new Scanner(System.in);
-        int id = 1;
-        Task.deleteTask(id);
+        Task.deleteTask(1);
 		/*System.out.println("Task: ");
 		String task = scn.nextLine();
 		

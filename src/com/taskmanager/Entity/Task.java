@@ -53,42 +53,16 @@ public class Task {
         );
     }
 
-    public static void writeFile(String data) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(data))) {
-            writer.write(data);
+    public static void writeFile(String content) {
+        try (FileWriter fw = new FileWriter("data.json")) {
+            fw.write(content);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    //This method is going to be a step for read, create, delete and update;
-    /*public static String readFile() {
-        File file = new File("data.json");
-
-        if (!file.exists()) {
-            System.out.println("No file found, starting fresh.");
-            return "";
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-
-            // Read entire file into 1 string
-            StringBuilder content = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                content.append(line);
-            }
-
-            return content.toString();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }*/
-
+    //Method is working
     public static String readFile() {
         String fileName = "data.json";
         File file = new File(fileName);
@@ -112,7 +86,7 @@ public class Task {
     }
 
 
-
+    //Method is working
     public static int loadLastId() {
         File file = new File("data.json");
 
@@ -188,8 +162,6 @@ public class Task {
         // 2. Convert the new Task to a JSON string
         String newTaskJson = taskToJsonString(newTask);
 
-
-
         try {
             String existingContent = "";
 
@@ -230,51 +202,47 @@ public class Task {
     }
 
     public static void deleteTask(int idToDelete) {
-        String json = readFile();
+        String json = readFile().trim();
 
-        // Remove spaces/newlines to simplify
-        json = json.replace("\n", "").replace("\r", "").trim();
+        // Remove [ and ]
+        json = json.substring(1, json.length() - 1).trim();
 
-        // If file is empty or "[]"
-        if (json.equals("[]")) {
+        if (json.isEmpty()) {
             System.out.println("No tasks to delete.");
             return;
         }
 
-        // Locate the task with "id": X
-        String idString = "\"id\": " + idToDelete;
-        int idIndex = json.indexOf(idString);
+        // Split objects by "},{"
+        String[] objects = json.split("\\},\\{");
 
-        if (idIndex == -1) {
-            System.out.println("Task not found.");
-            return;
+        List<String> updatedObjects = new ArrayList<>();
+
+        for (String obj : objects) {
+            // Re-add braces because split removed them
+            String fixedObj = obj;
+
+            if (!fixedObj.startsWith("{")) fixedObj = "{" + fixedObj;
+            if (!fixedObj.endsWith("}")) fixedObj = fixedObj + "}";
+
+            // Find id field
+            int idIndex = fixedObj.indexOf("\"id\":");
+            int colon = fixedObj.indexOf(":", idIndex);
+            int comma = fixedObj.indexOf(",", colon);
+
+            // If no comma, it's the last field
+            if (comma == -1) comma = fixedObj.indexOf("}", colon);
+
+            int idValue = Integer.parseInt(fixedObj.substring(colon + 1, comma).trim());
+
+            if (idValue != idToDelete) {
+                updatedObjects.add(fixedObj);
+            }
         }
 
-        // Find the object boundaries: { ... }
-        int objStart = json.lastIndexOf("{", idIndex);
-        int objEnd = json.indexOf("}", idIndex);
+        // Convert back to JSON
+        String finalJson = "[" + String.join(",", updatedObjects) + "]";
 
-        // Extract the full object text
-        String taskObject = json.substring(objStart, objEnd + 1);
-
-        // Remove the object, handle commas
-        String updated = json.replace(taskObject, "");
-
-        // Remove extra commas and fix array format
-        updated = updated.replace(", ,", ",");
-        updated = updated.replace("[,", "[");
-        updated = updated.replace(",]", "]");
-
-        // Trim double commas and spaces
-        updated = updated.replace(",,", ",").trim();
-
-        // Edge case: empty array
-        if (updated.equals("[]") || updated.equals("")) {
-            updated = "[]";
-        }
-
-        // Save back to file
-        writeFile(updated);
+        writeFile(finalJson);
 
         System.out.println("Task deleted successfully!");
     }
